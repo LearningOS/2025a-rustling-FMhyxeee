@@ -3,7 +3,6 @@
 	This problem requires you to implement a basic interface for a binary tree
 */
 
-//I AM NOT DONE
 use std::cmp::Ordering;
 use std::fmt::Debug;
 
@@ -50,13 +49,43 @@ where
 
     // Insert a value into the BST
     fn insert(&mut self, value: T) {
-        //TODO
+        match self.root {
+            None => {
+                self.root = Some(Box::new(TreeNode::new(value)));
+            }
+            Some(ref mut node) => {
+                node.insert(value);
+            }
+        }
     }
 
     // Search for a value in the BST
     fn search(&self, value: T) -> bool {
-        //TODO
-        true
+        match self.root {
+            None => false,
+            Some(ref node) => {
+                let mut current = node.as_ref();
+                loop {
+                    match value.cmp(&current.value) {
+                        Ordering::Less => {
+                            if let Some(ref left) = current.left {
+                                current = left.as_ref();
+                            } else {
+                                return false;
+                            }
+                        }
+                        Ordering::Greater => {
+                            if let Some(ref right) = current.right {
+                                current = right.as_ref();
+                            } else {
+                                return false;
+                            }
+                        }
+                        Ordering::Equal => return true,
+                    }
+                }
+            }
+        }
     }
 }
 
@@ -66,7 +95,25 @@ where
 {
     // Insert a node into the tree
     fn insert(&mut self, value: T) {
-        //TODO
+        match value.cmp(&self.value) {
+            Ordering::Less => {
+                if let Some(ref mut left) = self.left {
+                    left.insert(value);
+                } else {
+                    self.left = Some(Box::new(TreeNode::new(value)));
+                }
+            }
+            Ordering::Greater => {
+                if let Some(ref mut right) = self.right {
+                    right.insert(value);
+                } else {
+                    self.right = Some(Box::new(TreeNode::new(value)));
+                }
+            }
+            Ordering::Equal => {
+                // Do nothing for duplicate values
+            }
+        }
     }
 }
 
@@ -121,6 +168,6 @@ mod tests {
             None => panic!("Root should not be None after insertion"),
         }
     }
-}    
+}
 
 
